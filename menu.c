@@ -88,49 +88,59 @@ void opcja3() {
 
 typedef struct {
 
+	char* name;
 	unsigned int wins;
 	unsigned int lastNumberOfGoals[5];
-	char* name;
 
 }Team;
 
 
 uint8_t teamsLength = 0;
-Team teams[50];
+Team** teams = NULL;
 
 void printTeam(Team* team) {
-	printf("Nazwa: %s\nIlosc wygranych: %i\nOstatnie wyniki:\n%i\n%i\n%i\n%i\n%i\n",
+	printf("Nazwa: %s\nIlosc wygranych: %i\nOstatnie wyniki: %i, %i, %i, %i, %i\n\n",
 		team->name, team->wins, team->lastNumberOfGoals[0], team->lastNumberOfGoals[1],
 		team->lastNumberOfGoals[2], team->lastNumberOfGoals[3], team->lastNumberOfGoals[4]);
 }
 
-void printTeams(Team* f1, uint8_t len) {
+void printTeams(Team** f1, uint8_t len) {
+	printf("\n");
 	for (uint8_t n = 0; n < len; n++) {
-		printTeam(&f1[n]);
+		printTeam(f1[n]);
 	}
 }
 
-Team scanTeam() {
-	Team temp;
+Team* scanTeam() {
+	Team* temp;
+	temp = (Team*)malloc(sizeof(Team));
 	printf("Podaj ilosc wygranych: ");
-	scanf("%i", &temp.wins);
+	scanf("%i", &temp->wins);
 	printf("Podaj 5 ostatnich ilosci goli:\n");
 	scanf("%i %i %i %i %i",
-		&temp.lastNumberOfGoals[0],
-		&temp.lastNumberOfGoals[1],
-		&temp.lastNumberOfGoals[2],
-		&temp.lastNumberOfGoals[3],
-		&temp.lastNumberOfGoals[4]);
+		&temp->lastNumberOfGoals[0],
+		&temp->lastNumberOfGoals[1],
+		&temp->lastNumberOfGoals[2],
+		&temp->lastNumberOfGoals[3],
+		&temp->lastNumberOfGoals[4]);
+	// tak, duzy bufor, ale trzeba byc gotowym na wszystko
+	temp->name = (char*)malloc(1024 * sizeof(char));
 	printf("Podaj nazwe druzyny: ");
-	char buffer[512];
-	scanf("\n%[^\n]", buffer);
-	temp.name = (char*)malloc(sizeof(char) * (strlen(buffer) + 1));
-	strcpy(temp.name, buffer);
+	scanf("\n%[^\n]", temp->name);
+	void* ptr = (char*)realloc(temp->name, strlen(temp->name) + 1);
+	// nie przypisze jak cos nie tak
+	if (ptr != NULL) {
+		temp->name = (char*)ptr;
+	}
+
+
 	return temp;
 }
 
 void freeTeam(Team* team) {
+
 	free(team->name);
+	free(team);
 }
 
 inline void opcja4() {
@@ -140,32 +150,61 @@ inline void opcja4() {
 	char result = 0;
 	scanf("\n%c", &result);
 
+	// do realloca
+	void* ptr = NULL;
+
 	switch (result) {
 	case 'p':
 
-		printTeams(&teams, teamsLength);
+		if (teamsLength > 0) {
+			printTeams(teams, teamsLength);
+		}
+		else {
+			printf("Pusto tu...\n");
+		}
 
 		break;
 
 	case 'a':
+		
+		ptr = (Team**)realloc(teams, (teamsLength + 1) * sizeof(Team*));
 
-		if (teamsLength < 50) {
+		if (ptr != NULL) {
+
+			teams = (Team**)ptr;
 			teams[teamsLength] = scanTeam();
 			teamsLength++;
 		}
 		else {
-			printf("Limit ilosci osiagniety!\n");
+			// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
+			printf("Pamieci nie udalo sie zaalokowac!\n");
 		}
 
 		break;
 
 	case 'd':
+
 		if (teamsLength > 0) {
+
+
 			teamsLength--;
-			freeTeam(&teams[teamsLength]);
+			teams[teamsLength] = scanTeam();
+			ptr = (Team**)realloc(teams, (teamsLength) * sizeof(Team*));
+
+			if (ptr != NULL) {
+
+				teams = (Team**)ptr;
+			}
+			else {
+				// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
+				// ostarni indeks nie bedzie brany pod uwage i moze zostanie zwolniony za nastepnym wywolaniem
+				printf("Pamieci nie udalo sie zaalokowac!\n");
+			}
+
+			break;
 		}
 		else {
-			printf("Nie da sie usunac niczego!\n");
+			printf("Nie da sie usunac czegos, czego nie ma!\n");
 		}
 
 		break;
@@ -242,8 +281,13 @@ void main_menu() {
 
 	printf("Do widzenia\n");
 
-	for (uint8_t n = 0; n < teamsLength; n++) {
-		freeTeam(&teams[n]);
+	if (teamsLength > 0) {
+
+		for (uint32_t n = 0; n < teamsLength; n++) {
+			freeTeam(teams[n]);
+		}
+
+		free(teams);
 	}
 }
 
