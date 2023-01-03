@@ -96,6 +96,7 @@ typedef struct {
 
 
 uint8_t teamsLength = 0;
+// tak, powinno to byc statyczna ale nie zauwazylem i w sumie to i tak jest limit narzucony
 Team** teams = NULL;
 
 void printTeam(Team* team) {
@@ -166,19 +167,26 @@ inline void opcja4() {
 		break;
 
 	case 'a':
-		
-		ptr = (Team**)realloc(teams, (teamsLength + 1) * sizeof(Team*));
 
-		if (ptr != NULL) {
+		if (teamsLength < 50) {
+			ptr = (Team**)realloc(teams, (teamsLength + 1) * sizeof(Team*));
 
-			teams = (Team**)ptr;
-			teams[teamsLength] = scanTeam();
-			teamsLength++;
+			if (ptr != NULL) {
+
+				teams = (Team**)ptr;
+				teams[teamsLength] = scanTeam();
+				teamsLength++;
+			}
+			else {
+				// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
+				printf("Pamieci nie udalo sie zaalokowac!\n");
+			}
 		}
 		else {
-			// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
-			printf("Pamieci nie udalo sie zaalokowac!\n");
+			printf("Limit jest tu");
 		}
+		
+		
 
 		break;
 
