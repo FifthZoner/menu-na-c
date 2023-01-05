@@ -132,6 +132,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="menu.c" />
+    <ClCompile Include="opcja1.c" />
+    <ClCompile Include="opcja2.c" />
+    <ClCompile Include="opcja3.c" />
+    <ClCompile Include="opcja4.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="opcja1.h" />
+    <ClInclude Include="opcja2.h" />
+    <ClInclude Include="opcja3.h" />
+    <ClInclude Include="opcja4.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

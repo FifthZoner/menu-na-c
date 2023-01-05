@@ -5,18 +5,42 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Pliki nagłówkowe">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="header files">
+      <UniqueIdentifier>{7d0df871-3cc7-4bb1-82b5-0ca9697b4118}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pliki zasobów">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="c files">
+      <UniqueIdentifier>{7757fba6-6e40-4b57-9162-3ee760f053b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="menu.c">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="opcja1.c">
+      <Filter>c files</Filter>
+    </ClCompile>
+    <ClCompile Include="opcja2.c">
+      <Filter>c files</Filter>
+    </ClCompile>
+    <ClCompile Include="opcja3.c">
+      <Filter>c files</Filter>
+    </ClCompile>
+    <ClCompile Include="opcja4.c">
+      <Filter>c files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="opcja1.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="opcja2.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="opcja3.h">
+      <Filter>header files</Filter>
+    </ClInclude>
+    <ClInclude Include="opcja4.h">
+      <Filter>header files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
