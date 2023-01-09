@@ -4,6 +4,8 @@
 
 #include "opcja4.h"
 
+#define sizeLimit 50
+
 // definicja struktury team
 typedef struct {
 
@@ -67,10 +69,105 @@ void freeTeam(Team* team) {
 	free(team);
 }
 
+// wczytuje nazwe pliku i zapisuje dane
+void saveData() {
+	char path[256];
+	printf("Podaj nazwe pliku: ");
+	scanf("%s", path);
+	char mode = 0;
+	while (mode != 'w' && mode != 'a') {
+		printf("Nadpisac czy dodac (w - write over, a - add): ");
+		scanf("\n%c", &mode);
+	}
+	FILE* file;
+	if (mode == 'w') {
+		file = fopen(path, "w");
+	}
+	else {
+		file = fopen(path, "a");
+	}
+	if (file == NULL) {
+		printf("Nie mozna otworzyc pliku!\n");
+		return;
+	}
+
+	// wlasciwe zapisywanie
+
+	// amount\n
+	// name\n
+	// wins goals[0] goals[1] goals[2] goals[3] goals[4]\n
+	// ...
+	// amount\n (przy dopisywaniu)
+	// ...
+	fprintf(file, "%i\n", teamsLength);
+	for (uint8_t n = 0; n < teamsLength; n++) {
+		fprintf(file, "%s\n%i %i %i %i %i %i\n", teams[n]->name, teams[n]->wins,
+			teams[n]->lastNumberOfGoals[0], teams[n]->lastNumberOfGoals[1], 
+			teams[n]->lastNumberOfGoals[2], teams[n]->lastNumberOfGoals[3], 
+			teams[n]->lastNumberOfGoals[4]);
+	}
+
+	fclose(file);
+}
+
+// wczytuje nazwe pliku i dane
+// przestaje przy limicie lub bledzie
+void loadData() {
+
+	char path[256];
+	printf("Podaj nazwe pliku: ");
+	scanf("%s", path);
+
+	FILE* file = fopen(path, "r");
+
+	if (file == NULL) {
+		printf("Nie mozna otworzyc pliku!\n");
+		return;
+	}
+
+	uint8_t amountToLoad = 0;
+	while (fscanf(file, "%i\n", &amountToLoad) == 1) {
+		
+		if (teamsLength + amountToLoad > sizeLimit) {
+			amountToLoad = sizeLimit - teamsLength;
+		}
+
+		void* ptr = (Team**)malloc(teams, sizeof(Team*) * (amountToLoad + teamsLength));
+		if (ptr == NULL) {
+			return;
+			fclose(file);
+		}
+
+		teams = (Team**)ptr;
+
+		for (uint8_t n = 0; n < amountToLoad; n++) {
+			ptr = (Team*)malloc(sizeof(Team));
+			((Team*)ptr)->name = (char*)malloc(1024);
+
+			if (fscanf(file, "%s%i%i%i%i%i%i", ((Team*)ptr)->name, &((Team*)ptr)->wins,
+				&((Team*)ptr)->lastNumberOfGoals[0], &((Team*)ptr)->lastNumberOfGoals[1],
+				&((Team*)ptr)->lastNumberOfGoals[2], &((Team*)ptr)->lastNumberOfGoals[3],
+				&((Team*)ptr)->lastNumberOfGoals[4]) == 7) {
+
+
+				ptr = (char*)realloc(((Team*)ptr)->name, strlen(((Team*)ptr)->name) + 1);
+			}
+			else {
+				free(((Team*)ptr)->name);
+				free(ptr);
+			}
+		}
+
+		teamsLength += amountToLoad;
+	}
+	
+	fclose(file);
+}
+
 // zarzadza iloscia struktur typu Team w zadany przez uzytkownika sposob
 void opcja4() {
 
-	printf("Cos zrobic? (p - print all, a - add, d - delete last):\n");
+	printf("Cos zrobic? (p - print all, a - add, d - delete last, s - save, l - load):\n");
 
 	char result = 0;
 	scanf("\n%c", &result);
@@ -92,7 +189,7 @@ void opcja4() {
 
 	case 'a':
 
-		if (teamsLength < 50) {
+		if (teamsLength < sizeLimit) {
 			ptr = (Team**)realloc(teams, (teamsLength + 1) * sizeof(Team*));
 
 			if (ptr != NULL) {
@@ -139,6 +236,14 @@ void opcja4() {
 			printf("Nie da sie usunac czegos, czego nie ma!\n");
 		}
 
+		break;
+
+	case 's':
+		saveData();
+		break;
+
+	case 'l':
+		loadData();
 		break;
 
 	default:
