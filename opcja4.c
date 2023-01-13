@@ -20,14 +20,14 @@ uint8_t teamsLength = 0;
 // tak, powinno to byc statyczna ale nie zauwazylem i w sumie to i tak jest limit narzucony
 Team** teams = NULL;
 
-// wypisuje zawartosc podejynczej struktury
+// wypisuje zawartosc podejynczej struktury, podac wskaznik do niej
 void printTeam(Team* team) {
 	printf("Nazwa: %s\nIlosc wygranych: %i\nOstatnie wyniki: %i, %i, %i, %i, %i\n\n",
 		team->name, team->wins, team->lastNumberOfGoals[0], team->lastNumberOfGoals[1],
 		team->lastNumberOfGoals[2], team->lastNumberOfGoals[3], team->lastNumberOfGoals[4]);
 }
 
-// wypisuje wszystkie zawartosci struktury
+// wypisuje wszystkie zawartosci struktury, podac wskaznik do wskaznikow do struktur i dlugosc
 void printTeams(Team** f1, uint8_t len) {
 	printf("\n");
 	for (uint8_t n = 0; n < len; n++) {
@@ -62,7 +62,7 @@ Team* scanTeam() {
 	return temp;
 }
 
-// zwalnia zaalokowana pamiec dla 1 struktury
+// zwalnia zaalokowana pamiec dla 1 struktury, podac wskaznik do niej
 void freeTeam(Team* team) {
 
 	free(team->name);
@@ -125,32 +125,28 @@ void loadData() {
 		return;
 	}
 
-	uint8_t amountToLoad = 0;
+	unsigned int amountToLoad = 0;
 	while (fscanf(file, "%i\n", &amountToLoad) == 1) {
+
 		
 		if (teamsLength + amountToLoad > sizeLimit) {
 			amountToLoad = sizeLimit - teamsLength;
 		}
 
-		void* ptr = (Team**)malloc(teams, sizeof(Team*) * (amountToLoad + teamsLength));
-		if (ptr == NULL) {
-			return;
-			fclose(file);
-		}
-
-		teams = (Team**)ptr;
+		teams = (Team**)realloc(teams, (teamsLength + amountToLoad) * sizeof(Team*));
 
 		for (uint8_t n = 0; n < amountToLoad; n++) {
-			ptr = (Team*)malloc(sizeof(Team));
-			((Team*)ptr)->name = (char*)malloc(1024);
+			Team* ptr = (Team*)malloc(sizeof(Team));
+			ptr->name = (char*)malloc(1024);
 
-			if (fscanf(file, "%s%i%i%i%i%i%i", ((Team*)ptr)->name, &((Team*)ptr)->wins,
-				&((Team*)ptr)->lastNumberOfGoals[0], &((Team*)ptr)->lastNumberOfGoals[1],
-				&((Team*)ptr)->lastNumberOfGoals[2], &((Team*)ptr)->lastNumberOfGoals[3],
-				&((Team*)ptr)->lastNumberOfGoals[4]) == 7) {
+			if (fscanf(file, "%[^\n]%i %i %i %i %i %i\n", ((Team*)ptr)->name, &((Team*)ptr)->wins,
+				&ptr->lastNumberOfGoals[0], &((Team*)ptr)->lastNumberOfGoals[1],
+				&ptr->lastNumberOfGoals[2], &((Team*)ptr)->lastNumberOfGoals[3],
+				&ptr->lastNumberOfGoals[4]) == 7) {
 
 
-				ptr = (char*)realloc(((Team*)ptr)->name, strlen(((Team*)ptr)->name) + 1);
+				((Team*)ptr)->name = (char*)realloc(ptr->name, strlen(((Team*)ptr)->name) + 1);
+				teams[teamsLength + n] = ptr;
 			}
 			else {
 				free(((Team*)ptr)->name);
@@ -262,6 +258,7 @@ void freeTeams() {
 		}
 
 		free(teams);
+		teams = NULL;
 		teamsLength = 0;
 	}
 }

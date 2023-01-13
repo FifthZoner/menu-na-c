@@ -1,3 +1,15 @@
-1
-ggsg
+2
+A generic team used to test this strange code thingy
 4 2 5 5 3 5
+A team that exists in this file and also does not exist in reality
+456 2 5 4 6 3
+1
+Another team name with spaces to check if fscanf works correctly!
+102 3 5 25 52 2
+3
+A generic team used to test this strange code thingy
+4 2 5 5 3 5
+A team that exists in this file and also does not exist in reality
+456 2 5 4 6 3
+Another team name with spaces to check if fscanf works correctly!
+102 3 5 25 52 2

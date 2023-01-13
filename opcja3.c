@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "opcja3.h"
 
-// wypisywanie tablicy
+// wypisywanie tablicy, podac tablice float i dlugosc
 void printArray(float* array, int len) {
 
 	for (unsigned int n = 0; n < len; n++) {
@@ -11,17 +11,17 @@ void printArray(float* array, int len) {
 	printf("\n");
 }
 
-// alokuje pamiec
+// alokuje pamiec lub realokuje, podac wskaznik i ilosc int'ow
 int* uploadMemory(int* pointer, int n) {
 	return (int*)realloc(pointer, n * sizeof(int));
 }
 
-// zwalnia pamiec
+// zwalnia pamiec, podac wskaznik
 void freeMemory(int* pointer) {
 	free(pointer);
 }
 
-// mimo nazwy zapisuje tablice zerami
+// mimo nazwy zapisuje tablice zerami, podac tablice int i dlugosc
 void ones(int* pointer, int len) {
 	for (int n = 0; n < len; n++) {
 		pointer[n] = 0;

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "opcja2.h"
 
-// suma, tak nazwana z powodu polecenia
+// suma, tak nazwana z powodu polecenia, podac tablice float i dlugosc
 float mean(float* array, int len) {
 	float value = 0;
 	for (unsigned int n = 0; n < len; n++) {
