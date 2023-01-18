@@ -3,6 +3,8 @@
 #include "opcja3.h"
 #include "opcja4.h"
 
+#include <stdio.h>
+
 void main_menu() {
 	// zmienne 
 	const unsigned int nrAlbumu = 173625;

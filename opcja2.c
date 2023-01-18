@@ -3,12 +3,21 @@
 #include "opcja2.h"
 
 // suma, tak nazwana z powodu polecenia, podac tablice float i dlugosc
-float mean(float* array, int len) {
+float mean(float* array, unsigned int len) {
 	float value = 0;
 	for (unsigned int n = 0; n < len; n++) {
 		value += array[n];
 	}
 	return value;
+}
+
+// wypisywanie tablicy, podac tablice float i dlugosc
+void printArray(float* array, unsigned int len) {
+
+	for (unsigned int n = 0; n < len; n++) {
+		printf("%f ", array[n]);
+	}
+	printf("\n");
 }
 
 // wypisuje sume 10 elementow zmiennoprzecinkowych wczytanych od uzytkownika

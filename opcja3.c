@@ -3,10 +3,10 @@
 #include "opcja3.h"
 
 // wypisywanie tablicy, podac tablice float i dlugosc
-void printArray(float* array, int len) {
+void printArrayInt(int* array, unsigned int len) {
 
 	for (unsigned int n = 0; n < len; n++) {
-		printf("%f ", array[n]);
+		printf("%i ", array[n]);
 	}
 	printf("\n");
 }
@@ -48,8 +48,7 @@ void opcja3() {
 	ones(tab, n);
 
 	printf("Stworzona tablica wyglada nastepujaco:\n");
-	printArray(tab, n);
+	printArrayInt(tab, n);
 
 	freeMemory(tab);
-
 }
