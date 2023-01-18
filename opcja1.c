@@ -2,16 +2,15 @@
 #include "opcja1.h"
 
 // zwraca maksymalna z 10 liczb wczytanych od uzytkownika
-float getMax() {
+float getMax( void ){
 	float max = 0, current = 0;
 
 	// pierwsza wartosc
 	while (1) {
+		while (getchar() != '\n');
 		printf("Podaj 1. liczbe: ");
 		if (scanf_s("%f", &current) != 1) {
-
 			printf("Blad wejscia!\n");
-			while (getchar() != '\n');
 		}
 		else {
 			break;
@@ -23,10 +22,10 @@ float getMax() {
 	for (unsigned short int n = 1; n < 10; n++) {
 
 		while (1) {
+			while (getchar() != '\n');
 			printf("Podaj %i. liczbe: ", n + 1);
 			if (scanf_s("%f", &current) != 1) {
 				printf("Blad wejscia!\n");
-				while (getchar() != '\n');
 			}
 			else {
 				break;
@@ -42,7 +41,7 @@ float getMax() {
 }
 
 // wywoluje funkcje ktora zwraca maksymalna z 10 liczb wczytanych od uzytkownika
-void opcja1() {
+void opcja1( void ) {
 	printf("Wybrano opcje 1, podanie najwiekszej z 10 liczb\n");
 
 	printf("Najwieksza z nich to: %f\n", getMax());

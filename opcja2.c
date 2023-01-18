@@ -21,7 +21,7 @@ void printArray(float* array, unsigned int len) {
 }
 
 // wypisuje sume 10 elementow zmiennoprzecinkowych wczytanych od uzytkownika
-void opcja2() {
+void opcja2( void ) {
 
 	printf("Wybrano opcje 2, wypisanie tablicy i mean ktore powinno bys srednia, a jest suma\nPodaj wartosci:\n");
 
@@ -35,9 +35,9 @@ void opcja2() {
 	for (unsigned short int n = 0; n < 10; n++) {
 
 		while (1) {
+			while (getchar() != '\n');
 			if (scanf_s("%f", &tab[n]) != 1) {
 				printf("Blad wejscia!\n");
-				while (getchar() != '\n');
 			}
 			else {
 				break;

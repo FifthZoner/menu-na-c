@@ -29,7 +29,7 @@ void ones(int* pointer, int len) {
 }
 
 // tworzy tablice o podanej wielkosci, wypelnia ja zerami i wyswietla
-void opcja3() {
+void opcja3( void ) {
 	printf("Wybrano opcje 3\n");
 	int n = 0;
 	while (1) {

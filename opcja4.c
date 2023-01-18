@@ -37,7 +37,7 @@ void printTeams(Team** f1, uint8_t len) {
 }
 
 // zwraca wskaznik do 1 wypelnionej struktury
-Team* scanTeam() {
+Team* scanTeam(void) {
 	Team* temp;
 	temp = (Team*)malloc(sizeof(Team));
 	if (temp == NULL) {
@@ -45,16 +45,17 @@ Team* scanTeam() {
 		return NULL;
 	}
 	while (1) {
+		while (getchar() != '\n');
 		printf("Podaj ilosc wygranych: ");
 		if (scanf_s("%i", &temp->wins)) {
 			printf("Blad wejscia!\n");
-			while (getchar() != '\n');
 		}
 		else {
 			break;
 		}
 	}
 	while (1) {
+		while (getchar() != '\n');
 		printf("Podaj 5 ostatnich ilosci goli:\n");
 		if (scanf_s("%i %i %i %i %i",
 			&temp->lastNumberOfGoals[0],
@@ -63,7 +64,6 @@ Team* scanTeam() {
 			&temp->lastNumberOfGoals[3],
 			&temp->lastNumberOfGoals[4]) != 5) {
 			printf("Blad wejscia!\n");
-			while (getchar() != '\n');
 		}
 		else {
 			break;
@@ -104,7 +104,7 @@ void freeTeam(Team* team) {
 }
 
 // wczytuje nazwe pliku i zapisuje dane
-void saveData() {
+void saveData(void) {
 
 	while (getchar() != '\n');
 
@@ -169,7 +169,7 @@ void saveData() {
 
 // wczytuje nazwe pliku i dane
 // przestaje przy limicie lub bledzie
-void loadData() {
+void loadData( void ) {
 
 	while (getchar() != '\n');
 
@@ -219,13 +219,13 @@ void loadData() {
 				teamsLength += n;
 
 				// skracanie
-				Team** temp = (Team**)realloc(teams, teamsLength * sizeof(Team*));
-				if (temp == NULL) {
+				Team** temp1 = (Team**)realloc(teams, teamsLength * sizeof(Team*));
+				if (temp1 == NULL) {
 					// w duzej czesci przypdakow program powinien dalej dzialac
 					printf("Blad skracania tablicy!\nKontynuacja niezalecana!\n");
 					return;
 				}
-				teams = temp;
+				teams = temp1;
 				return;
 			}
 			ptr->name = (char*)malloc(1024 * sizeof(char));
@@ -236,13 +236,13 @@ void loadData() {
 				teamsLength += n;
 
 				// skracanie
-				Team** temp = (Team**)realloc(teams, teamsLength * sizeof(Team*));
-				if (temp == NULL) {
+				Team** temp2 = (Team**)realloc(teams, teamsLength * sizeof(Team*));
+				if (temp2 == NULL) {
 					// w duzej czesci przypdakow program powinien dalej dzialac
 					printf("Blad skracania tablicy!\nKontynuacja niezalecana!\n");
 					return;
 				}
-				teams = temp;
+				teams = temp2;
 				return;
 			}
 
@@ -251,13 +251,13 @@ void loadData() {
 				&ptr->lastNumberOfGoals[2], &ptr->lastNumberOfGoals[3],
 				&ptr->lastNumberOfGoals[4]) == 7) {
 
-				char* temp = (char*)realloc(ptr->name, strnlen_s(ptr->name, 1024) + 1);
+				char* temp3 = (char*)realloc(ptr->name, strnlen_s(ptr->name, 1024) + 1);
 				
-				if (temp == NULL) {
+				if (temp3 == NULL) {
 					printf("Blad alokacji przy skracaniu, kontynuowanie z wiêksz¹ pamiecia!\n");
 				}
 				else {
-					ptr->name = temp;
+					ptr->name = temp3;
 				}
 				teams[teamsLength + n] = ptr;
 			}
@@ -267,14 +267,14 @@ void loadData() {
 			}
 		}
 
-		teamsLength += amountToLoad;
+		teamsLength += (uint8_t)amountToLoad;
 	}
 	
 	fclose(file);
 }
 
 // zarzadza iloscia struktur typu Team w zadany przez uzytkownika sposob
-void opcja4() {
+void opcja4(void) {
 
 	char result = 0;
 
@@ -291,7 +291,7 @@ void opcja4() {
 
 	// do realloca
 	void* ptr = NULL;
-	void* ptr2 = NULL;
+	Team* ptr2 = NULL;
 
 	switch (result) {
 	case 'p':
@@ -308,7 +308,7 @@ void opcja4() {
 	case 'a':
 
 		if (teamsLength < sizeLimit) {
-			(Team*)ptr2 = scanTeam();
+			ptr2 = scanTeam();
 			if (ptr2 == NULL) {
 				printf("Nie mozna bylo wczytac danych!\n");
 			}
@@ -318,7 +318,7 @@ void opcja4() {
 				if (ptr != NULL) {
 
 					teams = (Team**)ptr;
-					teams[teamsLength] = (Team*)ptr2;
+					teams[teamsLength] = ptr2;
 					teamsLength++;
 				}
 				else {
@@ -350,7 +350,7 @@ void opcja4() {
 			}
 			else {
 				// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
-				// ostarni indeks nie bedzie brany pod uwage i moze zostanie zwolniony za nastepnym wywolaniem
+				// ostatni indeks nie bedzie brany pod uwage i moze zostanie zwolniony za nastepnym wywolaniem
 				printf("Pamieci nie udalo sie zaalokowac!\n");
 			}
 
@@ -378,10 +378,9 @@ void opcja4() {
 }
 
 // zwalnia syf
-void freeTeams() {
+void freeTeams( void ) {
 	if (teamsLength > 0) {
-
-		for (uint32_t n = 0; n < teamsLength; n++) {
+		for (uint8_t n = 0; n < teamsLength; n++) {
 			freeTeam(teams[n]);
 		}
 

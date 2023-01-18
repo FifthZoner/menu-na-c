@@ -2,6 +2,6 @@
 #define OPCJA2_H
 
 // wypisuje sume 10 elementow zmiennoprzecinkowych wczytanych od uzytkownika
-void opcja2();
+void opcja2( void );
 
 #endif
