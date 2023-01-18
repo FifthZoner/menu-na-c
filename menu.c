@@ -13,9 +13,18 @@ void main_menu() {
 
 
 	do {
-		printf("Menu:\n- opcja 1:\n- opcja 2:\n- opcja 3:\n- opcja 4:\nWybierz opcje: ");
 		// opcja
-		scanf("%i", &nrOpcji);
+		while (1) {
+			printf("Menu:\n- opcja 1:\n- opcja 2:\n- opcja 3:\n- opcja 4:\nWybierz opcje: ");
+			if (scanf_s("%i", &nrOpcji) != 1) {
+				printf("Blad wejscia!\n");
+				while (getchar() != '\n');
+			}
+			else {
+				break;
+			}
+		}
+		
 
 		// sprawdzanie zakresu
 		if (nrOpcji < 5) {

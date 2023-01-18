@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "opcja4.h"
 
@@ -39,20 +40,53 @@ void printTeams(Team** f1, uint8_t len) {
 Team* scanTeam() {
 	Team* temp;
 	temp = (Team*)malloc(sizeof(Team));
-	printf("Podaj ilosc wygranych: ");
-	scanf("%i", &temp->wins);
-	printf("Podaj 5 ostatnich ilosci goli:\n");
-	scanf("%i %i %i %i %i",
-		&temp->lastNumberOfGoals[0],
-		&temp->lastNumberOfGoals[1],
-		&temp->lastNumberOfGoals[2],
-		&temp->lastNumberOfGoals[3],
-		&temp->lastNumberOfGoals[4]);
+	if (temp == NULL) {
+		printf("Blad alokacji!\n");
+		return NULL;
+	}
+	while (1) {
+		printf("Podaj ilosc wygranych: ");
+		if (scanf_s("%i", &temp->wins)) {
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
+	while (1) {
+		printf("Podaj 5 ostatnich ilosci goli:\n");
+		if (scanf_s("%i %i %i %i %i",
+			&temp->lastNumberOfGoals[0],
+			&temp->lastNumberOfGoals[1],
+			&temp->lastNumberOfGoals[2],
+			&temp->lastNumberOfGoals[3],
+			&temp->lastNumberOfGoals[4]) != 5) {
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
 	// tak, duzy bufor, ale trzeba byc gotowym na wszystko
 	temp->name = (char*)malloc(1024 * sizeof(char));
-	printf("Podaj nazwe druzyny: ");
-	scanf("\n%[^\n]", temp->name);
-	void* ptr = (char*)realloc(temp->name, strlen(temp->name) + 1);
+	if (temp->name == NULL) {
+		printf("Blad alokacji!\n");
+		free(temp);
+		return NULL;
+	}
+	while (1) {
+		printf("Podaj nazwe druzyny: ");
+		if (scanf_s("\n%[^\n]", temp->name, 1024) != 1) {
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
+	void* ptr = (char*)realloc(temp->name, strnlen_s(temp->name, sizeof(temp->name)) + 1);
 	// nie przypisze jak cos nie tak
 	if (ptr != NULL) {
 		temp->name = (char*)ptr;
@@ -71,13 +105,35 @@ void freeTeam(Team* team) {
 
 // wczytuje nazwe pliku i zapisuje dane
 void saveData() {
+
+	while (getchar() != '\n');
+
 	char path[256];
-	printf("Podaj nazwe pliku: ");
-	scanf("%s", path);
+	memset(path, '\0', sizeof(path));
+	*path = '\0';
+	while (1) {
+		printf("Podaj nazwe pliku: ");
+		if (scanf_s("%[^\n]", path, (unsigned int)sizeof(path)) != 1) {
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
 	char mode = 0;
 	while (mode != 'w' && mode != 'a') {
-		printf("Nadpisac czy dodac (w - write over, a - add): ");
-		scanf("\n%c", &mode);
+		while (1) {
+			printf("Nadpisac czy dodac (w - write over, a - add): ");
+			if (scanf_s("\n%c", &mode, 2) != 1) {
+				printf("Blad wejscia!\n");
+				while (getchar() != '\n');
+			}
+			else {
+				break;
+			}
+		}
+		
 	}
 	FILE* file;
 	if (mode == 'w') {
@@ -92,7 +148,8 @@ void saveData() {
 	}
 
 	// wlasciwe zapisywanie
-
+	// taki syntax:
+	// 
 	// amount\n
 	// name\n
 	// wins goals[0] goals[1] goals[2] goals[3] goals[4]\n
@@ -114,9 +171,22 @@ void saveData() {
 // przestaje przy limicie lub bledzie
 void loadData() {
 
+	while (getchar() != '\n');
+
 	char path[256];
-	printf("Podaj nazwe pliku: ");
-	scanf("%s", path);
+	memset(path, '\0', sizeof(path));
+	*path = '\0';
+	while (1) {
+		printf("Podaj nazwe pliku: ");
+		if (scanf_s("%[^\n]", path, 256) != 1) {
+			printf("Blad lub za dluga nazwa!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
+	
 
 	FILE* file = fopen(path, "r");
 
@@ -126,26 +196,69 @@ void loadData() {
 	}
 
 	unsigned int amountToLoad = 0;
-	while (fscanf(file, "%i\n", &amountToLoad) == 1) {
+	while (fscanf_s(file, "%i\n", &amountToLoad) == 1) {
 
 		
 		if (teamsLength + amountToLoad > sizeLimit) {
 			amountToLoad = sizeLimit - teamsLength;
 		}
 
-		teams = (Team**)realloc(teams, (teamsLength + amountToLoad) * sizeof(Team*));
-
+		Team** temp = (Team**)realloc(teams, (unsigned long long)(teamsLength + amountToLoad) * sizeof(Team*));
+		if (temp == NULL) {
+			printf("Blad alokacji!\n");
+			fclose(file);
+			return;
+		}
+		teams = temp;
 		for (uint8_t n = 0; n < amountToLoad; n++) {
 			Team* ptr = (Team*)malloc(sizeof(Team));
-			ptr->name = (char*)malloc(1024);
+			if (ptr == NULL) {
+				printf("Blad alokacji!\n");
+				free(ptr);
+				fclose(file);
+				teamsLength += n;
 
-			if (fscanf(file, "%[^\n]%i %i %i %i %i %i\n", ((Team*)ptr)->name, &((Team*)ptr)->wins,
-				&ptr->lastNumberOfGoals[0], &((Team*)ptr)->lastNumberOfGoals[1],
-				&ptr->lastNumberOfGoals[2], &((Team*)ptr)->lastNumberOfGoals[3],
+				// skracanie
+				Team** temp = (Team**)realloc(teams, teamsLength * sizeof(Team*));
+				if (temp == NULL) {
+					// w duzej czesci przypdakow program powinien dalej dzialac
+					printf("Blad skracania tablicy!\nKontynuacja niezalecana!\n");
+					return;
+				}
+				teams = temp;
+				return;
+			}
+			ptr->name = (char*)malloc(1024 * sizeof(char));
+			if (ptr->name == NULL) {
+				printf("Blad alokacji!\n");
+				free(ptr);
+				fclose(file);
+				teamsLength += n;
+
+				// skracanie
+				Team** temp = (Team**)realloc(teams, teamsLength * sizeof(Team*));
+				if (temp == NULL) {
+					// w duzej czesci przypdakow program powinien dalej dzialac
+					printf("Blad skracania tablicy!\nKontynuacja niezalecana!\n");
+					return;
+				}
+				teams = temp;
+				return;
+			}
+
+			if (fscanf_s(file, "%[^\n]%i %i %i %i %i %i\n", ptr->name, 1024, &ptr->wins,
+				&ptr->lastNumberOfGoals[0], &ptr->lastNumberOfGoals[1],
+				&ptr->lastNumberOfGoals[2], &ptr->lastNumberOfGoals[3],
 				&ptr->lastNumberOfGoals[4]) == 7) {
 
-
-				((Team*)ptr)->name = (char*)realloc(ptr->name, strlen(((Team*)ptr)->name) + 1);
+				char* temp = (char*)realloc(ptr->name, strnlen_s(ptr->name, 1024) + 1);
+				
+				if (temp == NULL) {
+					printf("Blad alokacji przy skracaniu, kontynuowanie z wiêksz¹ pamiecia!\n");
+				}
+				else {
+					ptr->name = temp;
+				}
 				teams[teamsLength + n] = ptr;
 			}
 			else {
@@ -163,13 +276,22 @@ void loadData() {
 // zarzadza iloscia struktur typu Team w zadany przez uzytkownika sposob
 void opcja4() {
 
-	printf("Cos zrobic? (p - print all, a - add, d - delete last, s - save, l - load):\n");
-
 	char result = 0;
-	scanf("\n%c", &result);
+
+	while (1) {
+		printf("Cos zrobic? (p - print all, a - add, d - delete last, s - save, l - load):\n");
+		if (scanf_s("\n%c", &result, 1) != 1) {
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
 
 	// do realloca
 	void* ptr = NULL;
+	void* ptr2 = NULL;
 
 	switch (result) {
 	case 'p':
@@ -186,17 +308,23 @@ void opcja4() {
 	case 'a':
 
 		if (teamsLength < sizeLimit) {
-			ptr = (Team**)realloc(teams, (teamsLength + 1) * sizeof(Team*));
-
-			if (ptr != NULL) {
-
-				teams = (Team**)ptr;
-				teams[teamsLength] = scanTeam();
-				teamsLength++;
+			(Team*)ptr2 = scanTeam();
+			if (ptr2 == NULL) {
+				printf("Nie mozna bylo wczytac danych!\n");
 			}
 			else {
-				// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
-				printf("Pamieci nie udalo sie zaalokowac!\n");
+				ptr = (Team**)realloc(teams, (unsigned long long)(teamsLength + 1) * sizeof(Team*));
+
+				if (ptr != NULL) {
+
+					teams = (Team**)ptr;
+					teams[teamsLength] = (Team*)ptr2;
+					teamsLength++;
+				}
+				else {
+					// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
+					printf("Blad alokacji!\n");
+				}
 			}
 		}
 		else {

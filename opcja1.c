@@ -6,14 +6,32 @@ float getMax() {
 	float max = 0, current = 0;
 
 	// pierwsza wartosc
-	printf("Podaj 1. liczbe: ");
-	scanf("%f", &current);
+	while (1) {
+		printf("Podaj 1. liczbe: ");
+		if (scanf_s("%f", &current) != 1) {
+
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
+	
 	max = current;
 
 	for (unsigned short int n = 1; n < 10; n++) {
 
-		printf("Podaj %i. liczbe: ", n + 1);
-		scanf("%f", &current);
+		while (1) {
+			printf("Podaj %i. liczbe: ", n + 1);
+			if (scanf_s("%f", &current) != 1) {
+				printf("Blad wejscia!\n");
+				while (getchar() != '\n');
+			}
+			else {
+				break;
+			}
+		}
 
 		if (current > max) {
 			max = current;

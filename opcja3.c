@@ -31,10 +31,17 @@ void ones(int* pointer, int len) {
 // tworzy tablice o podanej wielkosci, wypelnia ja zerami i wyswietla
 void opcja3() {
 	printf("Wybrano opcje 3\n");
-
-	printf("Podaj wielkosc tablicy do stworzenia: ");
 	int n = 0;
-	scanf("%i", &n);
+	while (1) {
+		printf("Podaj wielkosc tablicy do stworzenia: ");
+		if (scanf_s("%i", &n) != 1) {
+			printf("Blad wejscia!\n");
+			while (getchar() != '\n');
+		}
+		else {
+			break;
+		}
+	}
 
 	int* tab = uploadMemory(NULL, n);
 

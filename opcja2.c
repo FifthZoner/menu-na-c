@@ -18,8 +18,22 @@ void opcja2() {
 
 	float* tab = (float*)malloc(10 * sizeof(float));
 
+	if (tab == NULL) {
+		printf("Blad alokacji!\n");
+		return;
+	}
+
 	for (unsigned short int n = 0; n < 10; n++) {
-		scanf("%f", &tab[n]);
+
+		while (1) {
+			if (scanf_s("%f", &tab[n]) != 1) {
+				printf("Blad wejscia!\n");
+				while (getchar() != '\n');
+			}
+			else {
+				break;
+			}
+		}
 	}
 
 	printArray(tab, 10);
