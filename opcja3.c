@@ -39,6 +39,7 @@ void opcja3( void ) {
 			while (getchar() != '\n');
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}

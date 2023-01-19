@@ -35,11 +35,12 @@ void opcja2( void ) {
 	for (unsigned short int n = 0; n < 10; n++) {
 
 		while (1) {
-			while (getchar() != '\n');
 			if (scanf_s("%f", &tab[n]) != 1) {
+				while (getchar() != '\n');
 				printf("Blad wejscia!\n");
 			}
 			else {
+				while (getchar() != '\n');
 				break;
 			}
 		}

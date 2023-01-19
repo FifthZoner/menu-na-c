@@ -45,17 +45,17 @@ Team* scanTeam(void) {
 		return NULL;
 	}
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj ilosc wygranych: ");
-		if (scanf_s("%i", &temp->wins)) {
+		if (scanf_s("%i", &temp->wins) != 1) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj 5 ostatnich ilosci goli:\n");
 		if (scanf_s("%i %i %i %i %i",
 			&temp->lastNumberOfGoals[0],
@@ -63,9 +63,11 @@ Team* scanTeam(void) {
 			&temp->lastNumberOfGoals[2],
 			&temp->lastNumberOfGoals[3],
 			&temp->lastNumberOfGoals[4]) != 5) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
@@ -79,10 +81,11 @@ Team* scanTeam(void) {
 	while (1) {
 		printf("Podaj nazwe druzyny: ");
 		if (scanf_s("\n%[^\n]", temp->name, 1024) != 1) {
-			printf("Blad wejscia!\n");
 			while (getchar() != '\n');
+			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
@@ -115,7 +118,6 @@ void saveData(void) {
 		printf("Podaj nazwe pliku: ");
 		if (scanf_s("%[^\n]", path, (unsigned int)sizeof(path)) != 1) {
 			printf("Blad wejscia!\n");
-			while (getchar() != '\n');
 		}
 		else {
 			break;
@@ -125,9 +127,9 @@ void saveData(void) {
 	while (mode != 'w' && mode != 'a') {
 		while (1) {
 			printf("Nadpisac czy dodac (w - write over, a - add): ");
-			if (scanf_s("\n%c", &mode, 2) != 1) {
-				printf("Blad wejscia!\n");
+			if (scanf_s("%c", &mode, 2) != 1) {
 				while (getchar() != '\n');
+				printf("Blad wejscia!\n");
 			}
 			else {
 				break;
@@ -180,7 +182,6 @@ void loadData( void ) {
 		printf("Podaj nazwe pliku: ");
 		if (scanf_s("%[^\n]", path, 256) != 1) {
 			printf("Blad lub za dluga nazwa!\n");
-			while (getchar() != '\n');
 		}
 		else {
 			break;
@@ -280,9 +281,9 @@ void opcja4(void) {
 
 	while (1) {
 		printf("Cos zrobic? (p - print all, a - add, d - delete last, s - save, l - load):\n");
-		if (scanf_s("\n%c", &result, 1) != 1) {
-			printf("Blad wejscia!\n");
+		if (scanf_s("%c", &result, 1) != 1) {
 			while (getchar() != '\n');
+			printf("Blad wejscia!\n");
 		}
 		else {
 			break;
@@ -383,7 +384,6 @@ void freeTeams( void ) {
 		for (uint8_t n = 0; n < teamsLength; n++) {
 			freeTeam(teams[n]);
 		}
-
 		free(teams);
 		teams = NULL;
 		teamsLength = 0;

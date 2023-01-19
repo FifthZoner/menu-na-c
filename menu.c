@@ -1,5 +1,6 @@
 // bledy i ostrzezenia sprawdzone dla poziomu Wall w Visual Studio 2022
-// jedyne ostrzerzenia sa zwiazane z exploitem spectre, nie jestem pewnien czy implementacja fixa zadziala poza vs wiec ja pominalem
+// jedyne ostrzerzenia sa zwiazane z exploitem spectre
+// nie jestem pewnien czy implementacja fixa zadziala poza vs wiec ja pominalem
 
 #include "opcja1.h"
 #include "opcja2.h"
@@ -22,12 +23,13 @@ void main_menu( void ) {
 	do {
 		// opcja
 		while (1) {
-			while (getchar() != '\n');
 			printf("Menu:\n- opcja 1:\n- opcja 2:\n- opcja 3:\n- opcja 4:\nWybierz opcje: ");
 			if (scanf_s("%i", &nrOpcji) != 1) {
+				while (getchar() != '\n');
 				printf("Blad wejscia!\n");
 			}
 			else {
+				while (getchar() != '\n');
 				break;
 			}
 		}
