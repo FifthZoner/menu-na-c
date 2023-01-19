@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include "opcja2.h"
 
+#if !_MSC_VER
+#define scanf_s scanf
+#define fscanf_s fscanf
+#define strnlen_s strnlen
+#endif
+
 // suma, tak nazwana z powodu polecenia, podac tablice float i dlugosc
 float mean(float* array, unsigned int len) {
 	float value = 0;

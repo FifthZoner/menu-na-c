@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include "opcja1.h"
 
+#if !_MSC_VER
+#define scanf_s scanf
+#define fscanf_s fscanf
+#define strnlen_s strnlen
+#endif
+
 // zwraca maksymalna z 10 liczb wczytanych od uzytkownika
 float getMax( void ){
 	float max = 0, current = 0;

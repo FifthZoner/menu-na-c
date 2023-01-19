@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include "opcja3.h"
 
+#if !_MSC_VER
+#define scanf_s scanf
+#define fscanf_s fscanf
+#define strnlen_s strnlen
+#endif
+
 // wypisywanie tablicy, podac tablice float i dlugosc
 void printArrayInt(int* array, unsigned int len) {
 
@@ -33,10 +39,10 @@ void opcja3( void ) {
 	printf("Wybrano opcje 3\n");
 	int n = 0;
 	while (1) {
+		while (getchar() != '\n');
 		printf("Podaj wielkosc tablicy do stworzenia: ");
 		if (scanf_s("%i", &n) != 1) {
 			printf("Blad wejscia!\n");
-			while (getchar() != '\n');
 		}
 		else {
 			break;

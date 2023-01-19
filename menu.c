@@ -1,5 +1,6 @@
 // bledy i ostrzezenia sprawdzone dla poziomu Wall w Visual Studio 2022
 // jedyne ostrzerzenia sa zwiazane z exploitem spectre, nie jestem pewnien czy implementacja fixa zadziala poza vs wiec ja pominalem
+// makro dla innych srodowisk zamienia funkcje z powodu ich mozliwego braku
 
 #include "opcja1.h"
 #include "opcja2.h"
@@ -8,6 +9,12 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+
+#if !_MSC_VER
+#define scanf_s scanf
+#define fscanf_s fscanf
+#define strnlen_s strnlen
+#endif
 
 void main_menu( void ) {
 	// zmienne 
