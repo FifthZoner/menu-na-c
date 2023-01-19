@@ -45,6 +45,7 @@ void opcja3( void ) {
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}

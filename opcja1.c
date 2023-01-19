@@ -13,12 +13,13 @@ float getMax( void ){
 
 	// pierwsza wartosc
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj 1. liczbe: ");
 		if (scanf_s("%f", &current) != 1) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
@@ -28,12 +29,13 @@ float getMax( void ){
 	for (unsigned short int n = 1; n < 10; n++) {
 
 		while (1) {
-			while (getchar() != '\n');
 			printf("Podaj %i. liczbe: ", n + 1);
 			if (scanf_s("%f", &current) != 1) {
+				while (getchar() != '\n');
 				printf("Blad wejscia!\n");
 			}
 			else {
+				while (getchar() != '\n');
 				break;
 			}
 		}

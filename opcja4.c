@@ -51,17 +51,17 @@ Team* scanTeam(void) {
 		return NULL;
 	}
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj ilosc wygranych: ");
-		if (scanf_s("%i", &temp->wins)) {
+		if (scanf_s("%i", &temp->wins) != 1) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj 5 ostatnich ilosci goli:\n");
 		if (scanf_s("%i %i %i %i %i",
 			&temp->lastNumberOfGoals[0],
@@ -69,9 +69,11 @@ Team* scanTeam(void) {
 			&temp->lastNumberOfGoals[2],
 			&temp->lastNumberOfGoals[3],
 			&temp->lastNumberOfGoals[4]) != 5) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
@@ -83,12 +85,13 @@ Team* scanTeam(void) {
 		return NULL;
 	}
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj nazwe druzyny: ");
-		if (scanf_s("%[^\n]", temp->name, 1024) != 1) {
+		if (scanf_s("\n%[^\n]", temp->name, 1024) != 1) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
+			while (getchar() != '\n');
 			break;
 		}
 	}
@@ -118,9 +121,8 @@ void saveData(void) {
 	memset(path, '\0', sizeof(path));
 	*path = '\0';
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj nazwe pliku: ");
-		if (scanf_s("%[^\n]", path, (unsigned int)sizeof(path) / (unsigned int)sizeof(char)) != 1) {
+		if (scanf_s("%[^\n]", path, (unsigned int)sizeof(path)) != 1) {
 			printf("Blad wejscia!\n");
 		}
 		else {
@@ -130,9 +132,9 @@ void saveData(void) {
 	char mode = 0;
 	while (mode != 'w' && mode != 'a') {
 		while (1) {
-			while (getchar() != '\n');
 			printf("Nadpisac czy dodac (w - write over, a - add): ");
 			if (scanf_s("%c", &mode, 2) != 1) {
+				while (getchar() != '\n');
 				printf("Blad wejscia!\n");
 			}
 			else {
@@ -183,7 +185,6 @@ void loadData( void ) {
 	memset(path, '\0', sizeof(path));
 	*path = '\0';
 	while (1) {
-		while (getchar() != '\n');
 		printf("Podaj nazwe pliku: ");
 		if (scanf_s("%[^\n]", path, 256) != 1) {
 			printf("Blad lub za dluga nazwa!\n");
@@ -252,10 +253,10 @@ void loadData( void ) {
 				return;
 			}
 
-			if (fscanf_s(file, "%[^\n]", ptr->name, 1024 ) ==  1 && fscanf_s(file, "%i %i %i %i %i %i\n", &ptr->wins,
+			if (fscanf_s(file, "%[^\n]%i %i %i %i %i %i\n", ptr->name, 1024, &ptr->wins,
 				&ptr->lastNumberOfGoals[0], &ptr->lastNumberOfGoals[1],
 				&ptr->lastNumberOfGoals[2], &ptr->lastNumberOfGoals[3],
-				&ptr->lastNumberOfGoals[4]) == 6) {
+				&ptr->lastNumberOfGoals[4]) == 7) {
 
 				char* temp3 = (char*)realloc(ptr->name, strnlen_s(ptr->name, 1024) + 1);
 				
@@ -285,9 +286,9 @@ void opcja4(void) {
 	char result = 0;
 
 	while (1) {
-		while (getchar() != '\n');
 		printf("Cos zrobic? (p - print all, a - add, d - delete last, s - save, l - load):\n");
-		if (scanf_s("\n%c", &result, 1) != 1) {
+		if (scanf_s("%c", &result, 1) != 1) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
@@ -336,6 +337,8 @@ void opcja4(void) {
 		else {
 			printf("Limit jest tu");
 		}
+
+
 
 		break;
 
@@ -387,7 +390,6 @@ void freeTeams( void ) {
 		for (uint8_t n = 0; n < teamsLength; n++) {
 			freeTeam(teams[n]);
 		}
-
 		free(teams);
 		teams = NULL;
 		teamsLength = 0;

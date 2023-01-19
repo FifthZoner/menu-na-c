@@ -29,12 +29,13 @@ void main_menu( void ) {
 	do {
 		// opcja
 		while (1) {
-			while (getchar() != '\n');
 			printf("Menu:\n- opcja 1:\n- opcja 2:\n- opcja 3:\n- opcja 4:\nWybierz opcje: ");
 			if (scanf_s("%i", &nrOpcji) != 1) {
+				while (getchar() != '\n');
 				printf("Blad wejscia!\n");
 			}
 			else {
+				while (getchar() != '\n');
 				break;
 			}
 		}
