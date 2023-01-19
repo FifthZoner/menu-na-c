@@ -1,5 +1,3 @@
-// bledy i ostrzezenia sprawdzone dla poziomu Wall w Visual Studio 2022
-// jedyne ostrzerzenia sa zwiazane z exploitem spectre, nie jestem pewnien czy implementacja fixa zadziala poza vs wiec ja pominalem
 // makro dla innych srodowisk zamienia funkcje z powodu ich mozliwego braku
 
 #include "opcja1.h"

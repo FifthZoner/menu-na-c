@@ -36,8 +36,15 @@ void printTeam(Team* team) {
 
 // wypisuje wszystkie zawartosci struktury, podac wskaznik do wskaznikow do struktur i dlugosc
 void printTeams(Team** f1, uint8_t len) {
+	
+	if (len == 0) {
+		printf("Pusto tu...\n");
+		return;
+	}
+	
 	printf("\n");
 	for (uint8_t n = 0; n < len; n++) {
+		printf("%i:\n", n);
 		printTeam(f1[n]);
 	}
 }
@@ -95,7 +102,7 @@ Team* scanTeam(void) {
 			break;
 		}
 	}
-	void* ptr = (char*)realloc(temp->name, strnlen_s(temp->name, sizeof(temp->name)) + 1);
+	void* ptr = (char*)realloc(temp->name, strnlen_s(temp->name, 1024 * sizeof(char)) + 1);
 	// nie przypisze jak cos nie tak
 	if (ptr != NULL) {
 		temp->name = (char*)ptr;
@@ -253,10 +260,10 @@ void loadData( void ) {
 				return;
 			}
 
-			if (fscanf_s(file, "%[^\n]%i %i %i %i %i %i\n", ptr->name, 1024, &ptr->wins,
+			if (fscanf_s(file, "%[^\n]", ptr->name, 1024) == 1 && fscanf_s(file, "%i %i %i %i %i %i\n", &ptr->wins,
 				&ptr->lastNumberOfGoals[0], &ptr->lastNumberOfGoals[1],
 				&ptr->lastNumberOfGoals[2], &ptr->lastNumberOfGoals[3],
-				&ptr->lastNumberOfGoals[4]) == 7) {
+				&ptr->lastNumberOfGoals[4]) == 6) {
 
 				char* temp3 = (char*)realloc(ptr->name, strnlen_s(ptr->name, 1024) + 1);
 				
@@ -271,6 +278,19 @@ void loadData( void ) {
 			else {
 				free(((Team*)ptr)->name);
 				free(ptr);
+				printf("Nieoczekiwany blad wczytywania, przerywanie wczytywania!\nMozliwy blad w pliku!\n");
+				teamsLength += n;
+				fclose(file);
+
+				// skracanie
+				Team** temp2 = (Team**)realloc(teams, teamsLength * sizeof(Team*));
+				if (temp2 == NULL) {
+					// w duzej czesci przypdakow program powinien dalej dzialac
+					printf("Blad skracania tablicy!\nKontynuacja niezalecana!\n");
+					return;
+				}
+				teams = temp2;
+				return;
 			}
 		}
 
@@ -280,13 +300,114 @@ void loadData( void ) {
 	fclose(file);
 }
 
+// dodaje team do tablicy, sama pobiera dane
+void addTeam( void ) {
+	if (teamsLength < sizeLimit) {
+		Team* ptr2 = scanTeam();
+		if (ptr2 == NULL) {
+			printf("Nie mozna bylo wczytac danych!\n");
+		}
+		else {
+			void* ptr = (Team**)realloc(teams, (unsigned long long)(teamsLength + 1) * sizeof(Team*));
+
+			if (ptr != NULL) {
+
+				teams = (Team**)ptr;
+				teams[teamsLength] = ptr2;
+				teamsLength++;
+			}
+			else {
+				// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
+				printf("Blad alokacji!\n");
+			}
+		}
+	}
+	else {
+		printf("Limit jest tu");
+	}
+}
+
+void deleteLast( void ) {
+	if (teamsLength > 0 && teams != NULL) {
+
+		teamsLength--;
+		Team** ptr = (Team**)realloc(teams, (teamsLength) * sizeof(Team*));
+
+		if (ptr != NULL && teamsLength != 0) {
+
+			teams = (Team**)ptr;
+		}
+		else {
+			// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
+			// ostatni indeks nie bedzie brany pod uwage i moze zostanie zwolniony za nastepnym wywolaniem
+			printf("Pamieci nie udalo sie zaalokowac!\n");
+		}
+	}
+	else {
+		printf("Nie da sie usunac czegos, czego nie ma!\n");
+	}
+}
+
+// usuwa z indeksu, sama pobiera dane
+void deleteFromIndex( void ) {
+
+	if (teamsLength == 0 || teams == NULL) {
+		printf("Nie da sie usunac czegos, czego nie ma!\n");
+		return;
+	}
+
+	// male wielkosci zmiennych psuja wartosci i scanf
+	unsigned int index = 0;
+
+	while (1) {
+		printf("Podaj numer indeksu: \n");
+		if (scanf_s("%i", &index) != 1) {
+			while (getchar() != '\n');
+			printf("Blad wejscia!\n");
+		}
+		else {
+			if (index >= teamsLength) {
+				while (getchar() != '\n');
+				printf("Poza zakresem!\n");
+			}
+			else {
+				break;
+			}
+		}
+	}
+
+	// sa szybsze sposoby ale ten nie miesza kolejnosci
+	
+	Team* ptr = teams[index];
+
+	for (uint8_t n = (uint8_t)index; n < teamsLength + 1; n++) {
+		teams[n] = teams[n + 1];
+		
+	}
+
+	free(ptr->name);
+	free(ptr);
+
+	teamsLength--;
+
+	// skracanie
+	Team** temp = (Team**)realloc(teams, teamsLength * sizeof(Team*));
+	if (temp == NULL) {
+		// w duzej czesci przypdakow program powinien dalej dzialac
+		printf("Blad skracania tablicy!\nKontynuacja niezalecana!\n");
+		return;
+	}
+	teams = temp;
+
+}
+
 // zarzadza iloscia struktur typu Team w zadany przez uzytkownika sposob
-void opcja4(void) {
+void opcja4( void ) {
 
 	char result = 0;
 
 	while (1) {
-		printf("Cos zrobic? (p - print all, a - add, d - delete last, s - save, l - load):\n");
+		printf("Cos zrobic? (p - print all, a - add, d - delete last, i - delete from index, s - save, l - load):\n");
 		if (scanf_s("%c", &result, 1) != 1) {
 			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
@@ -296,77 +417,17 @@ void opcja4(void) {
 		}
 	}
 
-	// do realloca
-	void* ptr = NULL;
-	Team* ptr2 = NULL;
-
 	switch (result) {
 	case 'p':
-
-		if (teamsLength > 0) {
-			printTeams(teams, teamsLength);
-		}
-		else {
-			printf("Pusto tu...\n");
-		}
-
+		printTeams(teams, teamsLength);
 		break;
 
 	case 'a':
-
-		if (teamsLength < sizeLimit) {
-			ptr2 = scanTeam();
-			if (ptr2 == NULL) {
-				printf("Nie mozna bylo wczytac danych!\n");
-			}
-			else {
-				ptr = (Team**)realloc(teams, (unsigned long long)(teamsLength + 1) * sizeof(Team*));
-
-				if (ptr != NULL) {
-
-					teams = (Team**)ptr;
-					teams[teamsLength] = ptr2;
-					teamsLength++;
-				}
-				else {
-					// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
-					printf("Blad alokacji!\n");
-				}
-			}
-		}
-		else {
-			printf("Limit jest tu");
-		}
-
-
-
+		addTeam();
 		break;
 
 	case 'd':
-
-		if (teamsLength > 0) {
-
-
-			teamsLength--;
-			teams[teamsLength] = scanTeam();
-			ptr = (Team**)realloc(teams, (teamsLength) * sizeof(Team*));
-
-			if (ptr != NULL) {
-
-				teams = (Team**)ptr;
-			}
-			else {
-				// chyba null jest przy wielkosci 0 ale jakby co bo nie chce mi sie szukac
-				// ostatni indeks nie bedzie brany pod uwage i moze zostanie zwolniony za nastepnym wywolaniem
-				printf("Pamieci nie udalo sie zaalokowac!\n");
-			}
-
-			break;
-		}
-		else {
-			printf("Nie da sie usunac czegos, czego nie ma!\n");
-		}
-
+		deleteLast();
 		break;
 
 	case 's':
@@ -375,6 +436,10 @@ void opcja4(void) {
 
 	case 'l':
 		loadData();
+		break;
+
+	case 'i':
+		deleteFromIndex();
 		break;
 
 	default:

@@ -39,13 +39,13 @@ void opcja3( void ) {
 	printf("Wybrano opcje 3\n");
 	int n = 0;
 	while (1) {
-		while (getchar() != '\n');
+		
 		printf("Podaj wielkosc tablicy do stworzenia: ");
 		if (scanf_s("%i", &n) != 1) {
+			while (getchar() != '\n');
 			printf("Blad wejscia!\n");
 		}
 		else {
-			while (getchar() != '\n');
 			break;
 		}
 	}
