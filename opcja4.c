@@ -228,7 +228,6 @@ void loadData( void ) {
 			Team* ptr = (Team*)malloc(sizeof(Team));
 			if (ptr == NULL) {
 				printf("Blad alokacji!\n");
-				free(ptr);
 				fclose(file);
 				teamsLength += n;
 
